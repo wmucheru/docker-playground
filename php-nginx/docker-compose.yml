@@ -28,7 +28,7 @@ services:
     command: "true"
 
   mysql:
-    build: ./db/
+    image: mysql:8.0
     platform: linux/x86_64 # Fix for M1 macs
     container_name: mysql-invoicer
     restart: always
@@ -39,6 +39,8 @@ services:
       MYSQL_ROOT_PASSWORD: secret
     expose:
       - 3306
+    volumes:
+      - ./db/dumps:/docker-entrypoint-initdb.d
     volumes_from:
       - mysql-data
 
