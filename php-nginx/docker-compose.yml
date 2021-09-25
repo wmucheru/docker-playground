@@ -1,0 +1,60 @@
+version: "3.8"
+services:
+  nginx:
+    build: ./nginx/
+    container_name: nginx-invoicer
+    ports:
+      - 8000:80
+    links:
+      - php
+    volumes_from:
+      - app-data
+
+  php:
+    build: ./php/
+    container_name: php-invoicer
+    expose:
+      - 9000
+    depends_on:
+      - mysql
+    volumes_from:
+      - app-data
+
+  app-data:
+    image: php:7.4-fpm
+    container_name: app-data-invoicer
+    volumes:
+      - ./www/html/:/var/www/html
+    command: "true"
+
+  mysql:
+    image: mysql:8.0
+    platform: linux/x86_64 # Fix for M1 macs
+    container_name: mysql-invoicer
+    restart: always
+    environment:
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: secret
+    expose:
+      - "3306"
+    volumes_from:
+      - mysql-data
+
+  mysql-data:
+    image: mysql:8.0
+    container_name: mysql-data-invoicer
+    volumes:
+      - ./db:/var/lib/mysql
+    command: "true"
+
+  php-myadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    restart: always
+    environment:
+      PMA_HOST: mysql
+    depends_on:
+      - mysql
