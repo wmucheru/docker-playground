@@ -28,7 +28,7 @@ services:
     command: "true"
 
   mysql:
-    image: mysql:8.0
+    build: ./db/
     platform: linux/x86_64 # Fix for M1 macs
     container_name: mysql-invoicer
     restart: always
@@ -38,7 +38,7 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: secret
     expose:
-      - "3306"
+      - 3306
     volumes_from:
       - mysql-data
 
@@ -46,13 +46,13 @@ services:
     image: mysql:8.0
     container_name: mysql-data-invoicer
     volumes:
-      - ./db:/var/lib/mysql
+      - ./db/data:/var/lib/mysql
     command: "true"
 
   php-myadmin:
     image: phpmyadmin/phpmyadmin
     ports:
-      - "8080:80"
+      - 8080:80
     restart: always
     environment:
       PMA_HOST: mysql
