@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  odoo:
+    image: odoo:14.0
+    platform: linux/x86_64 # Fix for M1 macs
+    container_name: odoo-app
+    environment:
+      - HOST=mydb
+      - USER=odoo
+      - PASSWORD=odoo
+    ports:
+      - 8000:8069
+    volumes:
+      - ./data/files/:/var/lib/odoo
+    depends_on:
+      - postgres
+
+  mydb:
+    image: postgres:13
+    platform: linux/x86_64 # Fix for M1 macs
+    container_name: odoo-db
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_DB=mydb
+    volumes:
+      - ./data/db/:/var/lib/postgresql/odoo-data
